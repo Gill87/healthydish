@@ -1,0 +1,41 @@
+{
+  "title": "Healthy Peanut Butter Cookies",
+  "description": "Soft, chewy peanut butter cookies sweetened naturally with maple syrup and made with whole wheat flour for a nutritious twist on a classic treat.",
+  "prepTime": "10 min",
+  "cookTime": "12 min",
+  "servings": 12,
+  "calories": 145,
+  "difficulty": "Easy",
+  "ingredients": [
+    { "item": "natural creamy peanut butter (unsweetened)", "amount": "1 cup" },
+    { "item": "pure maple syrup", "amount": "1/3 cup" },
+    { "item": "large egg", "amount": "1" },
+    { "item": "vanilla extract", "amount": "1 tsp" },
+    { "item": "whole wheat flour (or oat flour)", "amount": "1/2 cup" },
+    { "item": "baking soda", "amount": "1/2 tsp" },
+    { "item": "sea salt", "amount": "1/4 tsp" },
+    { "item": "dark chocolate chips (optional, 70% cacao or higher)", "amount": "1/4 cup" }
+  ],
+  "instructions": [
+    "Preheat your oven to 350°F (175°C) and line a baking sheet with parchment paper.",
+    "In a medium mixing bowl, combine the peanut butter, maple syrup, egg, and vanilla extract. Whisk until smooth and well incorporated.",
+    "In a separate small bowl, whisk together the whole wheat flour, baking soda, and sea salt.",
+    "Add the dry ingredients to the wet ingredients and stir until just combined and a dough forms. If using, fold in the dark chocolate chips.",
+    "Using a tablespoon or cookie scoop, portion the dough into 12 balls. Place them on the prepared baking sheet, spacing them about 2 inches apart.",
+    "Use a fork to gently press down on each dough ball in a crisscross pattern to flatten slightly.",
+    "Bake for 10-12 minutes, or until the edges are just set. The cookies will be soft; they will firm up as they cool.",
+    "Let the cookies cool on the baking sheet for 5 minutes before transferring them to a wire rack to cool completely."
+  ],
+  "nutrition": {
+    "protein": "5g",
+    "carbs": "13g",
+    "fat": "9g",
+    "fiber": "2g"
+  },
+  "tips": [
+    "For a gluten-free version, substitute whole wheat flour with an equal amount of oat or almond flour.",
+    "Do not overbake — cookies continue to set while cooling; they’re best slightly soft in the center.",
+    "Ensure peanut butter is well-stirred and at room temperature for easiest mixing.",
+    "For extra protein, add 1–2 tablespoons of unflavored protein powder; you may need a splash of milk if dough becomes too dry."
+  ]
+}

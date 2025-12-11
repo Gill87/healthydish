@@ -25,13 +25,6 @@ export default function HealthyDishPage() {
   const [prompt, setPrompt] = useState('');
   const router = useRouter();
 
-  const navLinks = [
-    { name: 'Home', active: true },
-    { name: 'My Recipes', active: false },
-    { name: 'Groceries', active: false },
-    { name: 'Popular Recipes', active: false },
-  ];
-
   const handleGenerateRecipe = () => {
     if (!prompt.trim()) return;
     const params = new URLSearchParams({
@@ -48,95 +41,7 @@ export default function HealthyDishPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#F0FDF4] text-slate-800 font-sans relative">
-      
-      {/* --- Navigation Bar --- */}
-      <nav className="flex items-center justify-between px-4 md:px-8 py-4 bg-white/50 backdrop-blur-sm sticky top-0 z-50">
-        
-        {/* Logo */}
-        <div className="flex items-center gap-2">
-          <ChefHat className="w-6 h-6 text-[#459e85]" />
-          <span className="text-xl font-medium text-slate-700">HealthyDish</span>
-        </div>
-
-        {/* Desktop Links */}
-        <div className="hidden lg:flex items-center gap-2">
-          {navLinks.map((link) => (
-            <button
-              key={link.name}
-              className={cn(
-                "px-4 py-2 rounded-lg text-sm font-medium transition-all",
-                link.active 
-                  ? "bg-[#E0F2F1] text-[#2d5e52]" 
-                  : "text-slate-600 hover:bg-white/60 hover:text-slate-900"
-              )}
-            >
-              {link.name}
-            </button>
-          ))}
-        </div>
-
-        {/* User Profile (Desktop) */}
-        <div className="hidden lg:flex items-center gap-3">
-          <div className="w-9 h-9 rounded-full bg-[#E0F2F1] border border-[#B2DFDB] flex items-center justify-center text-[#2d5e52]">
-            <User className="w-5 h-5" />
-          </div>
-          <span className="text-sm font-medium text-slate-700">Sarah Chen</span>
-          <ChevronDown className="w-4 h-4 text-slate-400" />
-        </div>
-
-        {/* Mobile Menu Toggle */}
-        <div className="lg:hidden">
-          <button 
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="p-2 text-slate-600 hover:bg-emerald-50 rounded-full transition-colors"
-          >
-            {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-          </button>
-        </div>
-      </nav>
-
-      {/* --- Mobile Drawer (Top Right) --- */}
-      {/* This renders conditionally based on state */}
-      <div className={cn(
-        "fixed inset-0 z-40 lg:hidden transition-all duration-300 pointer-events-none",
-        isMobileMenuOpen ? "bg-black/20 pointer-events-auto" : "bg-transparent"
-      )} onClick={() => setIsMobileMenuOpen(false)}>
-        
-        <div 
-          onClick={(e) => e.stopPropagation()} 
-          className={cn(
-            "absolute top-0 right-0 h-full w-3/4 max-w-sm bg-white shadow-2xl transition-transform duration-300 ease-out flex flex-col pt-20 px-6",
-            isMobileMenuOpen ? "translate-x-0" : "translate-x-full"
-          )}
-        >
-          <div className="flex flex-col gap-2">
-            {navLinks.map((link) => (
-              <button
-                key={link.name}
-                className={cn(
-                  "px-4 py-3 rounded-xl text-left text-base font-medium transition-all",
-                  link.active 
-                    ? "bg-emerald-50 text-emerald-800" 
-                    : "text-slate-600 hover:bg-slate-50"
-                )}
-              >
-                {link.name}
-              </button>
-            ))}
-            
-            <div className="h-px bg-slate-100 my-4" />
-            
-            <div className="flex items-center gap-3 px-4 py-2">
-              <div className="w-10 h-10 rounded-full bg-[#E0F2F1] border border-[#B2DFDB] flex items-center justify-center text-[#2d5e52]">
-                <User className="w-5 h-5" />
-              </div>
-              <span className="text-base font-medium text-slate-700">Sarah Chen</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
+    <div className="min-h-screen bg-[#F0FDF4] text-slate-800 font-sans relative">       
       {/* --- Main Content --- */}
       <main className="flex flex-col items-center justify-center pt-16 md:pt-24 px-4 max-w-4xl mx-auto text-center animate-in fade-in duration-500">
         
