@@ -1,55 +1,122 @@
-// app/api/generate/route.ts
 import type { NextRequest } from "next/server";
+
+type Ingredient = { item: string; amount: string };
+type Nutrition = { protein?: string; carbs?: string; fat?: string; fiber?: string };
+type Recipe = {
+  title: string;
+  description?: string;
+  prepTime?: string;
+  cookTime?: string;
+  servings?: number;
+  calories?: number;
+  difficulty?: string;
+  ingredients: Ingredient[];
+  instructions: string[];
+  nutrition?: Nutrition;
+  tips?: string[];
+};
+
+function makeError(message: string, status = 502) {
+  return new Response(JSON.stringify({ error: message }), {
+    status,
+    headers: { "Content-Type": "application/json" },
+  });
+}
 
 export async function POST(req: NextRequest) {
   try {
-    const body = await req.json();
-    const { prompt, cookTime } = body;
+    const body = await req.json().catch(() => ({}));
+    const prompt = (body?.prompt || "").toString().trim();
+    const cookTime = (body?.cookTime || "").toString().trim();
 
-    if (!prompt) {
-      return new Response(JSON.stringify({ error: "Missing prompt" }), { status: 400 });
-    }
+    if (!prompt) return makeError("Missing prompt", 400);
+    if(prompt.length > 2000) return makeError("Prompt is too long", 400); // Check Length
 
     const apiKey = process.env.DEEPSEEK_API_KEY;
-    if (!apiKey) {
-      return new Response(JSON.stringify({ error: "Server misconfigured" }), { status: 500 });
-    }
+    if (!apiKey) return makeError("Server misconfigured (missing API key)", 500);
 
-    // Server-side fetch to DeepSeek
+    // Call the provider
     const deepseekRes = await fetch("https://api.deepseek.com/v1/chat/completions", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${apiKey}`,
+        Authorization: `Bearer ${apiKey}`,
       },
       body: JSON.stringify({
         model: "deepseek-chat",
         messages: [
           {
             role: "system",
-            content: "You are a professional chef and nutritionist. Create detailed, healthy recipes in JSON format..."
+            content:
+              "You are a professional chef and nutritionist. Create detailed, healthy recipes in JSON format with the following structure: {\"title\": \"Recipe Name\", \"description\": \"Brief description\", \"prepTime\": \"X min\", \"cookTime\": \"X min\", \"servings\": X, \"calories\": X, \"difficulty\": \"Easy/Medium/Hard\", \"ingredients\": [{\"item\": \"ingredient\", \"amount\": \"quantity\"}], \"instructions\": [\"step 1\", \"step 2\"], \"nutrition\": {\"protein\": \"Xg\", \"carbs\": \"Xg\", \"fat\": \"Xg\", \"fiber\": \"Xg\"}, \"tips\": [\"tip 1\", \"tip 2\"] }"
           },
           {
             role: "user",
-            content: `Create a healthy recipe for: ${prompt}. Cook time should be around ${cookTime}. Return ONLY valid JSON.`
+            content: `Create a healthy recipe for: ${prompt}. Cook time should be around ${cookTime}. Return ONLY valid JSON, no markdown formatting.`
           }
         ],
         temperature: 0.7,
-        max_tokens: 2000
+        max_tokens: 2000,
       }),
     });
 
     if (!deepseekRes.ok) {
-      const errText = await deepseekRes.text().catch(() => "unknown error");
-      return new Response(JSON.stringify({ error: errText }), { status: deepseekRes.status });
+      const txt = await deepseekRes.text().catch(() => `Provider error: ${deepseekRes.status}`);
+      return makeError(`Provider error: ${txt}`, deepseekRes.status);
     }
 
-    const data = await deepseekRes.json();
-    return new Response(JSON.stringify(data), {
+    const provider = await deepseekRes.json().catch(() => null);
+    const rawContent = provider?.choices?.[0]?.message?.content;
+    if (!rawContent) return makeError("Invalid provider response (missing content)", 502);
+
+    // Clean fences and parse JSON
+    let parsed: any;
+    try {
+      const clean = rawContent.replace(/```json|```/g, "").trim();
+      parsed = JSON.parse(clean);
+    } catch (e: any) {
+      return makeError("Failed to parse provider JSON: " + (e?.message || ""), 502);
+    }
+
+    // Basic validation
+    if (
+      !parsed ||
+      typeof parsed.title !== "string" ||
+      !Array.isArray(parsed.ingredients) ||
+      !Array.isArray(parsed.instructions)
+    ) {
+      return makeError("Parsed recipe missing required fields (title/ingredients/instructions)", 502);
+    }
+
+    // Normalize fields and provide defaults
+    const recipe: Recipe = {
+      title: parsed.title,
+      description: parsed.description || "",
+      prepTime: parsed.prepTime || "15 min",
+      cookTime: parsed.cookTime || cookTime || "30 min",
+      servings: typeof parsed.servings === "number" ? parsed.servings : Number(parsed.servings) || 4,
+      calories: typeof parsed.calories === "number" ? parsed.calories : Number(parsed.calories) || 0,
+      difficulty: parsed.difficulty || "Medium",
+      ingredients: parsed.ingredients.map((ing: any) => ({
+        item: String(ing.item || ing.name || ""),
+        amount: String(ing.amount || ing.qty || ""),
+      })),
+      instructions: parsed.instructions.map((s: any) => String(s)),
+      nutrition: {
+        protein: parsed.nutrition?.protein || "0g",
+        carbs: parsed.nutrition?.carbs || "0g",
+        fat: parsed.nutrition?.fat || "0g",
+        fiber: parsed.nutrition?.fiber || "0g",
+      },
+      tips: Array.isArray(parsed.tips) ? parsed.tips.map((t: any) => String(t)) : [],
+    };
+
+    return new Response(JSON.stringify({ recipe }), {
       status: 200,
-      headers: { "Content-Type": "application/json" }
+      headers: { "Content-Type": "application/json" },
     });
   } catch (err: any) {
-    return new Response(JSON.stringify({ error: err?.message || "Server error" }), { status: 500 });
+    console.error("Route error /api/recipe:", err);
+    return makeError(err?.message || "Server error", 500);
   }
 }

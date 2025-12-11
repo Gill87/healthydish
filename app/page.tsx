@@ -1,5 +1,5 @@
 'use client';
-
+import { useRouter } from "next/navigation";
 import React, { useState } from 'react';
 import { 
   User, 
@@ -23,13 +23,13 @@ export default function HealthyDishPage() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [cookTime, setCookTime] = useState('30 min');
   const [prompt, setPrompt] = useState('');
+  const router = useRouter();
 
   const navLinks = [
-    { name: 'Recipes', active: true },
+    { name: 'Home', active: true },
+    { name: 'My Recipes', active: false },
     { name: 'Groceries', active: false },
-    { name: 'Meal Plans', active: false },
     { name: 'Popular Recipes', active: false },
-    { name: 'Fast Food Reimagined', active: false },
   ];
 
   const handleGenerateRecipe = () => {
@@ -38,7 +38,7 @@ export default function HealthyDishPage() {
       prompt: prompt,
       cookTime: cookTime
      });
-    window.location.href = `/recipe?${params.toString()}`;
+    router.push(`/recipe?${params.toString()}`);
   };
 
   const handleKeyPress = (e: { key: string; }) => {
