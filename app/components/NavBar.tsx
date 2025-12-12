@@ -82,6 +82,35 @@ export default function NavBar() {
           {open ? <X /> : <Menu />}
         </button>
       </div>
+
+      {/* Mobile Drawer */}
+      {open && (
+        <div className="lg:hidden border-t">
+          {/* User Profile */}
+          {user && (
+            <div className="flex items-center gap-3 px-4 py-4">
+              <div className="w-9 h-9 rounded-full accent-soft flex items-center justify-center">
+                <User className="w-5 h-5" />
+              </div>
+              <span className="text-sm">
+                {user.user_metadata?.full_name ?? user.email}
+              </span>
+            </div>
+          )}
+          <nav className="flex flex-col">
+            {links.map((l) => (
+              <Link
+                key={l.href}
+                href={l.href}
+                className="px-4 py-4 text-sm"
+                onClick={() => setOpen(false)}
+              >
+                {l.label}
+              </Link>
+            ))}
+          </nav>
+        </div>
+      )}
     </header>
   );
 }
