@@ -1,46 +1,27 @@
-// app/auth/callback/page.tsx
-import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
-import { createServerClient } from "@supabase/auth-helpers-nextjs";
+'use client';
 
-export default async function OAuthCallbackPage() {
-  // create server supabase client that reads session from cookies
-  const cookieStore = await cookies();
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    { cookies: cookieStore }
-  );
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import supabase from '@/lib/supabaseClient';
 
-  try {
-    // try to read the session/user
-    const {
-      data: { user },
-      error,
-    } = await supabase.auth.getUser();
+export default function AuthCallbackPage() {
+  const router = useRouter();
 
-    // If we have a user, redirect to home/dashboard
-    if (user) {
-      // optionally: you can inspect session to route users differently
-      redirect("/home");
-    }
+  useEffect(() => {
+    const finalizeAuth = async () => {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
 
-    // If no user is found, sometimes the provider redirect arrives before cookies are set.
-    // We can wait a tiny bit and try again (brief retry).
-    await new Promise((r) => setTimeout(r, 400)); // 400ms retry
-    const {
-      data: { user: retriedUser },
-    } = await supabase.auth.getUser();
+      if (session) {
+        router.replace('/home');
+      } else {
+        router.replace('/signin?oauth=failed');
+      }
+    };
 
-    if (retriedUser) {
-      redirect("/home");
-    }
+    finalizeAuth();
+  }, [router]);
 
-    // fallback: if still no user, send to sign-in with an optional query param
-    redirect("/signin?oauth=failed");
-  } catch (err) {
-    console.error("OAuth callback error:", err);
-    // on error send users to sign in page (you may show a message there)
-    redirect("/signin?oauth=error");
-  }
+  return null;
 }

@@ -1,12 +1,107 @@
 @import "tailwindcss";
 
+/* ==============================
+   Design Tokens (plain CSS only)
+================================ */
 :root {
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+
+  --brand-500: #459e85;
+  --brand-600: #3a7c6d;
+  --brand-soft: #d5efe6;
+
+  --bg-page: #f0fdf4;
+  --bg-surface: #ffffff;
+
+  --text-primary: #1f2933;
+  --text-secondary: #475569;
+  --text-muted: #94a3b8;
+
+  --border-soft: #e2e8f0;
 }
 
-body {
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* ==============================
+   Base layer
+================================ */
+@layer base {
+  html,
+  body {
+    height: 100%;
+  }
+
+  body {
+    background-color: var(--bg-page);
+    color: var(--text-primary);
+    font-family: var(--font-sans), system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1 {
+    @apply text-4xl md:text-5xl font-semibold tracking-tight;
+  }
+
+  h2 {
+    @apply text-2xl font-semibold;
+  }
+
+  h3 {
+    @apply text-xl font-semibold;
+  }
+
+  p {
+    @apply text-base;
+    color: var(--text-secondary);
+  }
 }
 
+/* ==============================
+   Components layer
+================================ */
+@layer components {
+  .page {
+    @apply min-h-screen;
+  }
+
+  .container {
+    @apply max-w-7xl mx-auto px-4;
+  }
+
+  .card {
+    background-color: var(--bg-surface);
+    @apply rounded-2xl shadow-sm;
+  }
+
+  .btn-primary {
+    background-color: var(--brand-500);
+    color: white;
+    @apply rounded-xl px-5 py-3 font-medium transition;
+  }
+
+  .btn-primary:hover {
+    background-color: var(--brand-600);
+  }
+
+  .input {
+    @apply w-full rounded-xl border px-4 py-3 outline-none;
+    border-color: var(--border-soft);
+  }
+
+  .input:focus {
+    @apply ring-2;
+    --tw-ring-color: var(--brand-soft);
+  }
+
+  .accent {
+    color: var(--brand-500);
+  }
+
+  .accent-soft {
+    background-color: var(--brand-soft);
+    color: var(--brand-600);
+  }
+
+  .text-muted {
+    color: var(--text-muted);
+  }
+}
