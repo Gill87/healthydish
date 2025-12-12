@@ -10,7 +10,7 @@ export default function NavBar() {
   const pathname = usePathname();
 
   const navLinks = [
-    { href: '/', label: 'Home' },
+    { href: '/home', label: 'Home' },
     { href: '/myrecipes', label: 'My Recipes' },
     { href: '/groceries', label: 'Groceries' },
     { href: '/popular', label: 'Popular Recipes' },
