@@ -61,19 +61,41 @@ export default function NavBar() {
             </Link>
           ))}
         </nav>
-
+        
         <div className="flex-1" />
 
-        {user && (
-          <div className="hidden lg:flex items-center gap-3">
-            <div className="w-9 h-9 rounded-full accent-soft flex items-center justify-center">
-              <User className="w-5 h-5" />
-            </div>
-            <span className="text-sm">
-              {user.user_metadata?.full_name ?? user.email}
-            </span>
-          </div>
-        )}
+        <div className="hidden lg:flex items-center gap-3">
+          {user ? (
+            <Link
+              href="/account"
+              className="flex items-center gap-3 px-3 py-2 rounded-lg hover:accent-soft"
+            >
+              <div className="w-9 h-9 rounded-full accent-soft flex items-center justify-center">
+                <User className="w-5 h-5" />
+              </div>
+              <span className="text-sm">
+                {user.user_metadata?.full_name ?? user.email}
+              </span>
+            </Link>
+          ) : (
+            <>
+              <Link
+                href="/signin"
+                className="px-4 py-2 text-sm rounded-lg text-muted hover:accent-soft"
+              >
+                Log in
+              </Link>
+
+              <Link
+                href="/signup"
+                className="px-4 py-2 text-sm rounded-lg accent"
+              >
+                Sign up
+              </Link>
+            </>
+          )}
+        </div>
+
 
         <button
           className="lg:hidden ml-4 p-2"
@@ -87,16 +109,41 @@ export default function NavBar() {
       {open && (
         <div className="lg:hidden border-t">
           {/* User Profile */}
-          {user && (
-            <div className="flex items-center gap-3 px-4 py-4">
-              <div className="w-9 h-9 rounded-full accent-soft flex items-center justify-center">
-                <User className="w-5 h-5" />
+          <div className="border-b">
+            {user ? (
+              <Link
+                href="/account"
+                onClick={() => setOpen(false)}
+                className="flex items-center gap-3 px-4 py-4"
+              >
+                <div className="w-9 h-9 rounded-full accent-soft flex items-center justify-center">
+                  <User className="w-5 h-5" />
+                </div>
+                <span className="text-sm">
+                  {user.user_metadata?.full_name ?? user.email}
+                </span>
+              </Link>
+            ) : (
+              <div className="flex flex-col gap-2 px-4 py-4">
+                <Link
+                  href="/signin"
+                  onClick={() => setOpen(false)}
+                  className="px-4 py-2 text-sm rounded-lg text-center accent-soft"
+                >
+                  Log in
+                </Link>
+
+                <Link
+                  href="/signup"
+                  onClick={() => setOpen(false)}
+                  className="px-4 py-2 text-sm rounded-lg text-center accent"
+                >
+                  Sign up
+                </Link>
               </div>
-              <span className="text-sm">
-                {user.user_metadata?.full_name ?? user.email}
-              </span>
-            </div>
-          )}
+            )}
+          </div>
+
           <nav className="flex flex-col">
             {links.map((l) => (
               <Link
