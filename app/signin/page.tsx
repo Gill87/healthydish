@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useRedirectIfAuthenticated } from '@/lib/hooks/useRedirectIfAuthenticated';
 import supabase from '@/lib/supabaseClient';
 import { Mail, Lock, Loader2, ChefHat } from 'lucide-react';
 
@@ -36,6 +37,25 @@ export default function SignInPage() {
     setLoading(false);
     if (error) setError(error.message);
   };
+
+  const { checkingAuth } = useRedirectIfAuthenticated();
+
+  if (checkingAuth) {
+    return (
+      <div className="page flex items-center justify-center">
+        <Loader2 className="w-12 h-12 accent animate-spin" />
+      </div>
+    );
+  }
+
+  // Prevent landing page flash
+  if (checkingAuth) {
+    return (
+      <div className="page flex items-center justify-center">
+        <Loader2 className="w-12 h-12 accent animate-spin" />
+      </div>
+    );  
+  }
 
   return (
     <div className="page flex items-center justify-center">

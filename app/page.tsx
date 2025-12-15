@@ -1,9 +1,30 @@
 'use client';
+
+import { useRedirectIfAuthenticated } from '@/lib/hooks/useRedirectIfAuthenticated';
 import { useRouter } from 'next/navigation';
-import { Leaf, Sparkles, Heart, Zap } from 'lucide-react';
+import supabase from '@/lib/supabaseClient';
+import { Leaf, Sparkles, Heart, Zap, Loader2} from 'lucide-react';
 
 export default function Page() {
   const router = useRouter();
+  const { checkingAuth } = useRedirectIfAuthenticated();
+
+  if (checkingAuth) {
+    return (
+      <div className="page flex items-center justify-center">
+        <Loader2 className="w-12 h-12 accent animate-spin" />
+      </div>
+    );
+  }
+
+  // Prevent landing page flash
+  if (checkingAuth) {
+    return (
+      <div className="page flex items-center justify-center">
+        <Loader2 className="w-12 h-12 accent animate-spin" />
+      </div>
+    );  
+  }
 
   return (
     <main className="page flex flex-col items-center py-16">

@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import supabase from '@/lib/supabaseClient';
+import { useRedirectIfAuthenticated } from '@/lib/hooks/useRedirectIfAuthenticated';
 import { ChefHat, Mail, Lock, User, Loader2 } from 'lucide-react';
 
 export default function SignUpPage() {
@@ -56,6 +57,23 @@ export default function SignUpPage() {
 
     if (error) setError(error.message);
   };
+
+  const { checkingAuth } = useRedirectIfAuthenticated();
+  if (checkingAuth) {
+    return (
+      <div className="page flex items-center justify-center">
+        <Loader2 className="w-12 h-12 accent animate-spin" />
+      </div>
+    );
+  }
+  // Prevent landing page flash
+  if (checkingAuth) {
+    return (
+      <div className="page flex items-center justify-center">
+        <Loader2 className="w-12 h-12 accent animate-spin" />
+      </div>
+    );  
+  }
 
   return (
     <div className="page flex items-center justify-center">
