@@ -12,18 +12,15 @@ import {
 } from "lucide-react";
 
 type Ingredient = { item: string; amount: string };
-type Nutrition = { protein: string; carbs: string; fat: string; fiber: string };
 type RecipeType = {
   title: string;
   description: string;
   prepTime: string;
   cookTime: string;
   servings: number;
-  calories: number;
   difficulty: string;
   ingredients: Ingredient[];
   instructions: string[];
-  nutrition: Nutrition;
   tips: string[];
 };
 
@@ -103,7 +100,6 @@ export default function RecipePage() {
     prepTime: r.prepTime || "15 min",
     cookTime: r.cookTime || cookTimeFallback,
     servings: Number(r.servings) || 4,
-    calories: Number(r.calories) || 0,
     difficulty: r.difficulty || "Medium",
     ingredients: Array.isArray(r.ingredients)
       ? r.ingredients.map((i: any) => ({
@@ -114,12 +110,6 @@ export default function RecipePage() {
     instructions: Array.isArray(r.instructions)
       ? r.instructions.map(String)
       : [],
-    nutrition: {
-      protein: r.nutrition?.protein || "0g",
-      carbs: r.nutrition?.carbs || "0g",
-      fat: r.nutrition?.fat || "0g",
-      fiber: r.nutrition?.fiber || "0g",
-    },
     tips: Array.isArray(r.tips) ? r.tips.map(String) : [],
   });
 
@@ -212,7 +202,7 @@ export default function RecipePage() {
       <main className="container grid grid-cols-1 lg:grid-cols-3 gap-6 py-8">
         {/* Chat */}
         <aside className="lg:col-span-1">
-          <div className="card h-[70vh] flex flex-col p-4">
+        <div className="card h-[45vh] sm:h-[55vh] lg:h-[70vh] flex flex-col p-4">
             <h3 className="mb-3">Chat & Edit</h3>
 
             <div
@@ -272,14 +262,11 @@ export default function RecipePage() {
 
             <div className="flex gap-6 mt-4 text-sm text-muted">
               <span className="flex items-center gap-1">
-                <Clock className="w-4 h-4 accent" /> {recipe.prepTime} +{" "}
-                {recipe.cookTime}
+                <Clock className="w-4 h-4 accent" /> {recipe.prepTime} prep + {" "}
+                {recipe.cookTime} cook
               </span>
               <span className="flex items-center gap-1">
-                <Users className="w-4 h-4 accent" /> {recipe.servings}
-              </span>
-              <span className="flex items-center gap-1">
-                <Flame className="w-4 h-4 accent" /> {recipe.calories} cal
+                <Users className="w-4 h-4 accent" /> {recipe.servings} servings
               </span>
             </div>
           </div>

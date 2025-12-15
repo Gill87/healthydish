@@ -29,7 +29,7 @@ export async function POST(req: NextRequest) {
       content:
         "You are a helpful recipe assistant and professional chef. The user has a recipe (if provided). " +
         "When the user asks to modify or improve the recipe, respond in JSON with the exact shape " +
-        `{"title": "...", "description":"...", "prepTime":"...", "cookTime":"...", "servings": num, "calories": num, "difficulty":"...", "ingredients":[{"item":"...","amount":"..."}], "instructions":["..."], "nutrition": {"protein":"...","carbs":"...","fat":"...","fiber":"..."}, "tips":["..."]}` +
+        `{"title": "...", "description":"...", "prepTime":"...", "cookTime":"...", "servings": num, "difficulty":"...", "ingredients":[{"item":"...","amount":"..."}], "instructions":["..."], "tips":["..."]}` +
         " — and *only* return that JSON (no markdown). If the user is asking a question or wants advice, reply with a plain text assistant message in the 'reply' field. If you return both a reply and an updated recipe, the server will parse and forward both."
     };
 

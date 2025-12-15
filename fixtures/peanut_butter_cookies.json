@@ -4,7 +4,6 @@
   "prepTime": "10 min",
   "cookTime": "12 min",
   "servings": 12,
-  "calories": 145,
   "difficulty": "Easy",
   "ingredients": [
     { "item": "natural creamy peanut butter (unsweetened)", "amount": "1 cup" },
@@ -26,12 +25,7 @@
     "Bake for 10-12 minutes, or until the edges are just set. The cookies will be soft; they will firm up as they cool.",
     "Let the cookies cool on the baking sheet for 5 minutes before transferring them to a wire rack to cool completely."
   ],
-  "nutrition": {
-    "protein": "5g",
-    "carbs": "13g",
-    "fat": "9g",
-    "fiber": "2g"
-  },
+  
   "tips": [
     "For a gluten-free version, substitute whole wheat flour with an equal amount of oat or almond flour.",
     "Do not overbake — cookies continue to set while cooling; they’re best slightly soft in the center.",

@@ -1,18 +1,15 @@
 import type { NextRequest } from "next/server";
 
 type Ingredient = { item: string; amount: string };
-type Nutrition = { protein?: string; carbs?: string; fat?: string; fiber?: string };
 type Recipe = {
   title: string;
   description?: string;
   prepTime?: string;
   cookTime?: string;
   servings?: number;
-  calories?: number;
   difficulty?: string;
   ingredients: Ingredient[];
   instructions: string[];
-  nutrition?: Nutrition;
   tips?: string[];
 };
 
@@ -48,7 +45,7 @@ export async function POST(req: NextRequest) {
           {
             role: "system",
             content:
-              "You are a professional chef and nutritionist. Create detailed, healthy recipes in JSON format with the following structure: {\"title\": \"Recipe Name\", \"description\": \"Brief description\", \"prepTime\": \"X min\", \"cookTime\": \"X min\", \"servings\": X, \"calories\": X, \"difficulty\": \"Easy/Medium/Hard\", \"ingredients\": [{\"item\": \"ingredient\", \"amount\": \"quantity\"}], \"instructions\": [\"step 1\", \"step 2\"], \"nutrition\": {\"protein\": \"Xg\", \"carbs\": \"Xg\", \"fat\": \"Xg\", \"fiber\": \"Xg\"}, \"tips\": [\"tip 1\", \"tip 2\"] }"
+              "You are a professional chef and nutritionist. Create detailed, healthy recipes in JSON format with the following structure: {\"title\": \"Recipe Name\", \"description\": \"Brief description\", \"prepTime\": \"X min\", \"cookTime\": \"X min\", \"servings\": X, \"difficulty\": \"Easy/Medium/Hard\", \"ingredients\": [{\"item\": \"ingredient\", \"amount\": \"quantity\"}], \"instructions\": [\"step 1\", \"step 2\"], \"tips\": [\"tip 1\", \"tip 2\"] }"
           },
           {
             role: "user",
@@ -95,19 +92,12 @@ export async function POST(req: NextRequest) {
       prepTime: parsed.prepTime || "15 min",
       cookTime: parsed.cookTime || cookTime || "30 min",
       servings: typeof parsed.servings === "number" ? parsed.servings : Number(parsed.servings) || 4,
-      calories: typeof parsed.calories === "number" ? parsed.calories : Number(parsed.calories) || 0,
       difficulty: parsed.difficulty || "Medium",
       ingredients: parsed.ingredients.map((ing: any) => ({
         item: String(ing.item || ing.name || ""),
         amount: String(ing.amount || ing.qty || ""),
       })),
       instructions: parsed.instructions.map((s: any) => String(s)),
-      nutrition: {
-        protein: parsed.nutrition?.protein || "0g",
-        carbs: parsed.nutrition?.carbs || "0g",
-        fat: parsed.nutrition?.fat || "0g",
-        fiber: parsed.nutrition?.fiber || "0g",
-      },
       tips: Array.isArray(parsed.tips) ? parsed.tips.map((t: any) => String(t)) : [],
     };
 
