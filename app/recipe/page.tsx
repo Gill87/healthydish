@@ -29,16 +29,29 @@ type RecipeType = {
 
 type ChatMsg = { id: string; author: "user" | "assistant"; text: string };
 
+function TypingDots() {
+  return (
+    <div className="flex gap-1 px-2">
+      <span className="typing-dot" />
+      <span className="typing-dot" />
+      <span className="typing-dot" />
+    </div>
+  );
+}
+
+
 export default function RecipePage() {
   const [recipe, setRecipe] = useState<RecipeType | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [aiTyping, setAiTyping] = useState(false);
 
   const [chatMessages, setChatMessages] = useState<ChatMsg[]>([]);
   const [chatInput, setChatInput] = useState("");
   const [sending, setSending] = useState(false);
 
   const messagesRef = useRef<HTMLDivElement | null>(null);
+  
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -47,6 +60,20 @@ export default function RecipePage() {
     const cookTime = params.get("cookTime") || "30 min";
 
     if (!prompt) return;
+
+    // Include Initial Prompt in Chat
+    setChatMessages([
+      {
+        id: "initial",
+        author: "user",
+        text: prompt,
+      },
+      {
+        id: 'AI Initial Recipe',
+        author: 'assistant',
+        text: 'Recipe Created',
+      }
+    ]);
 
     (async () => {
       setLoading(true);
@@ -98,6 +125,7 @@ export default function RecipePage() {
 
   const sendChat = async () => {
     if (!chatInput.trim()) return;
+
     const userCount = chatMessages.filter(m => m.author === "user").length;
     if (userCount >= 5) {
       setError("You can only make up to 5 edits per recipe.");
@@ -113,6 +141,7 @@ export default function RecipePage() {
     setChatMessages(prev => [...prev, msg]);
     setChatInput("");
     setSending(true);
+    setAiTyping(true); // ✅ show typing dots
 
     try {
       const res = await fetch("/api/chat", {
@@ -125,9 +154,14 @@ export default function RecipePage() {
       });
 
       const data = await res.json();
+
       setChatMessages(prev => [
         ...prev,
-        { id: `${Date.now()}-a`, author: "assistant", text: data.reply },
+        {
+          id: `${Date.now()}-a`,
+          author: "assistant",
+          text: data.reply,
+        },
       ]);
 
       if (data.recipe) {
@@ -136,9 +170,11 @@ export default function RecipePage() {
     } catch (e: any) {
       setError(e?.message || "Chat failed");
     } finally {
+      setAiTyping(false); // ✅ remove typing dots
       setSending(false);
     }
   };
+
 
   /* ---------------- STATES ---------------- */
 
@@ -183,20 +219,32 @@ export default function RecipePage() {
               ref={messagesRef}
               className="flex-1 overflow-auto space-y-3 mb-4"
             >
-              {chatMessages.map((m) => (
+            {chatMessages.map((m) => (
+              <div
+                key={m.id}
+                className={`flex ${
+                  m.author === "user" ? "justify-end" : "justify-start"
+                }`}
+              >
                 <div
-                  key={m.id}
-                  className={`p-3 rounded-xl ${
+                  className={`p-3 rounded-xl max-w-[80%] ${
                     m.author === "user"
-                      ? "accent-soft self-end"
+                      ? "accent-soft text-right"
                       : "bg-slate-100"
                   }`}
                 >
-                  <p className="text-sm">{m.text}</p>
+                  <p className="text-sm whitespace-pre-wrap">{m.text}</p>
                 </div>
-              ))}
+              </div>
+            ))}
+            {aiTyping && (
+              <div className="flex justify-start">
+                <div className="p-3 rounded-xl bg-slate-100 max-w-[60%]">
+                  <TypingDots />
+                </div>
+              </div>
+              )}
             </div>
-
             <div className="flex gap-2">
               <input
                 className="input flex-1"
@@ -258,7 +306,7 @@ export default function RecipePage() {
               <ol className="space-y-4">
                 {recipe.instructions.map((step, idx) => (
                   <li key={idx} className="flex gap-4">
-                    <div className="w-8 h-8 rounded-full accent-soft flex items-center justify-center font-semibold text-sm">
+                    <div className="w-8 h-8 min-w-[2rem] min-h-[2rem] rounded-full accent-soft flex items-center justify-center font-semibold text-sm tabular-nums">
                       {idx + 1}
                     </div>
                     <p>{step}</p>
