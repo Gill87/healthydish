@@ -2,27 +2,20 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import { postRecipe } from '@/lib/api';
+import type { Recipe } from "@/types/recipe";
+import { saveRecipe } from "@/lib/saveRecipe";
+import supabase from "@/lib/supabaseClient";
+import { updateRecipe } from "@/lib/updateRecipe";
+import { updateFavorite } from "@/lib/updateFavorite";
+
 import {
   Clock,
   Users,
-  Flame,
+  Heart,
   Loader2,
   AlertCircle,
   Send,
 } from "lucide-react";
-
-type Ingredient = { item: string; amount: string };
-type RecipeType = {
-  title: string;
-  description: string;
-  prepTime: string;
-  cookTime: string;
-  servings: number;
-  difficulty: string;
-  ingredients: Ingredient[];
-  instructions: string[];
-  tips: string[];
-};
 
 type ChatMsg = { id: string; author: "user" | "assistant"; text: string };
 
@@ -38,10 +31,15 @@ function TypingDots() {
 
 
 export default function RecipePage() {
-  const [recipe, setRecipe] = useState<RecipeType | null>(null);
+  const [recipe, setRecipe] = useState<Recipe | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [aiTyping, setAiTyping] = useState(false);
+  const [isFavorited, setIsFavorited] = useState(false);
+  const [recipeId, setRecipeId] = useState<string | null>(null);
+  const hasSavedInitialRecipe = useRef(false);
+  const generationIdRef = useRef<string | null>(null);
+
 
   const [chatMessages, setChatMessages] = useState<ChatMsg[]>([]);
   const [chatInput, setChatInput] = useState("");
@@ -49,6 +47,19 @@ export default function RecipePage() {
 
   const messagesRef = useRef<HTMLDivElement | null>(null);
   
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    let gen = params.get("gen");
+
+    if (!gen) {
+      gen = crypto.randomUUID();
+      params.set("gen", gen);
+      window.history.replaceState({}, "", `?${params.toString()}`);
+    }
+
+    generationIdRef.current = gen;
+  }, []);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -61,24 +72,69 @@ export default function RecipePage() {
     // Include Initial Prompt in Chat
     setChatMessages([
       {
-        id: "initial",
-        author: "user",
-        text: prompt,
+        id: "system",
+        author: "assistant",
+        text: "Recipe loaded. You can continue editing it below.",
       },
-      {
-        id: 'AI Initial Recipe',
-        author: 'assistant',
-        text: 'Recipe Created',
-      }
     ]);
+
 
     (async () => {
       setLoading(true);
       setError(null);
       try {
+        
+        const {
+          data: { user },
+        } = await supabase.auth.getUser();
+
+        if (!user) return;
+
+        /* Try loading existing recipe */
+        const { data: existing } = await supabase
+          .from("recipes")
+          .select("*")
+          .eq("user_id", user.id)
+          .eq("generation_id", generationIdRef.current)
+          .single();
+
+        if (existing) {
+          setRecipe({
+            title: existing.title,
+            description: existing.description,
+            prepTime: existing.prep_time,
+            cookTime: existing.cook_time,
+            servings: existing.servings,
+            difficulty: existing.difficulty,
+            ingredients: existing.ingredients,
+            instructions: existing.instructions,
+            tips: existing.tips,
+          });
+
+          setRecipeId(existing.id);
+          setIsFavorited(existing.is_favorited);
+          return;
+        }
+
+        // If no recipe found, generate new recipe
         const data = await postRecipe(prompt, cookTime);
         if (!data?.recipe) throw new Error("Invalid recipe");
-        setRecipe(normalizeRecipe(data.recipe, cookTime));
+
+        const normalized = normalizeRecipe(data.recipe, cookTime);
+        setRecipe(normalized);
+
+        // SAVE RECIPE HERE (ONCE)
+        if (user && !hasSavedInitialRecipe.current) {
+          hasSavedInitialRecipe.current = true;
+
+          const saved = await saveRecipe(normalized, user.id, generationIdRef.current!);
+
+          if (saved) {
+            setRecipeId(saved.id);
+            setIsFavorited(saved.is_favorited);
+          }
+        }
+
       } catch (e: any) {
         setError(e?.message || "Failed to generate recipe");
       } finally {
@@ -94,7 +150,7 @@ export default function RecipePage() {
     });
   }, [chatMessages]);
 
-  const normalizeRecipe = (r: any, cookTimeFallback: string): RecipeType => ({
+  const normalizeRecipe = (r: any, cookTimeFallback: string): Recipe => ({
     title: r.title || "Untitled Recipe",
     description: r.description || "",
     prepTime: r.prepTime || "15 min",
@@ -154,9 +210,15 @@ export default function RecipePage() {
         },
       ]);
 
-      if (data.recipe) {
-        setRecipe(normalizeRecipe(data.recipe, recipe!.cookTime));
+      if (data.recipe && recipeId) {
+        const updated = normalizeRecipe(data.recipe, recipe!.cookTime);
+
+        setRecipe(updated);
+
+        // SAVE EDIT TO SUPABASE
+        await updateRecipe(recipeId, updated);
       }
+
     } catch (e: any) {
       setError(e?.message || "Chat failed");
     } finally {
@@ -165,13 +227,15 @@ export default function RecipePage() {
     }
   };
 
-
   /* ---------------- STATES ---------------- */
 
   if (loading) {
     return (
       <div className="page flex items-center justify-center">
-        <Loader2 className="w-12 h-12 accent animate-spin" />
+        <div className="flex flex-col items-center gap-3">
+          <Loader2 className="w-12 h-12 accent animate-spin" />
+          <p className="text-sm text-muted">Cooking Recipe...</p>
+        </div>
       </div>
     );
   }
@@ -257,7 +321,33 @@ export default function RecipePage() {
         {/* Recipe */}
         <section className="lg:col-span-2 space-y-6">
           <div className="card p-8">
-            <h1>{recipe.title}</h1>
+          <div className="flex items-center justify-between gap-4">
+            <h1 className="flex-1">{recipe.title}</h1>
+            <button
+              onClick={async () => {
+                if (!recipeId) return;
+
+                const next = !isFavorited;
+                setIsFavorited(next); // optimistic UI
+
+                try {
+                  await updateFavorite(recipeId, next);
+                } catch {
+                  setIsFavorited(!next); // rollback on failure
+                }
+              }}
+              className="p-2 rounded-full hover:bg-slate-100 transition"
+              aria-label="Favorite recipe"
+            >
+              <Heart
+                className={`w-6 h-6 transition ${
+                  isFavorited
+                    ? "fill-red-500 text-red-500"
+                    : "text-slate-400"
+                }`}
+              />
+            </button>
+          </div>
             <p className="mt-2">{recipe.description}</p>
 
             <div className="flex gap-6 mt-4 text-sm text-muted">
