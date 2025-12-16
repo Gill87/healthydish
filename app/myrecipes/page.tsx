@@ -1,0 +1,130 @@
+'use client';
+
+import { useEffect, useState } from "react";
+import Link from "next/link";
+import supabase from "@/lib/supabaseClient";
+import { Heart } from "lucide-react";
+
+type RecipeRow = {
+  id: string;
+  title: string;
+  description: string | null;
+  created_at: string;
+  is_favorited: boolean;
+};
+
+export default function MyRecipesPage() {
+  const [recipes, setRecipes] = useState<RecipeRow[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const {
+          data: { user },
+        } = await supabase.auth.getUser();
+
+        if (!user) return;
+
+        const { data, error } = await supabase
+          .from("recipes")
+          .select("id, title, description, created_at, is_favorited")
+          .eq("user_id", user.id)
+          .order("created_at", { ascending: false });
+
+        if (error) throw error;
+
+        setRecipes(data ?? []);
+      } catch (e: any) {
+        setError(e.message ?? "Failed to load recipes");
+      } finally {
+        setLoading(false);
+      }
+    })();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="page flex items-center justify-center">
+        <p className="text-muted">Loading recipes...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="page flex items-center justify-center">
+        <p>{error}</p>
+      </div>
+    );
+  }
+
+  const favorited = recipes.filter(r => r.is_favorited);
+  const recent = recipes.slice(0, 5); // last 5 created
+
+  return (
+    <div className="page">
+      <main className="container space-y-10 py-8">
+
+        {/* FAVORITES */}
+        <section>
+          <h2 className="mb-4">Favorited Recipes</h2>
+
+          {favorited.length === 0 ? (
+            <p className="text-muted">No favorited recipes yet.</p>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {favorited.map(recipe => (
+                <RecipeCard key={recipe.id} recipe={recipe} />
+              ))}
+            </div>
+          )}
+        </section>
+
+        {/* RECENT */}
+        <section>
+          <h2 className="mb-4">Recently Created</h2>
+
+          {recent.length === 0 ? (
+            <p className="text-muted">No recipes created yet.</p>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {recent.map(recipe => (
+                <RecipeCard key={recipe.id} recipe={recipe} />
+              ))}
+            </div>
+          )}
+        </section>
+
+      </main>
+    </div>
+  );
+}
+
+/* ---------------- CARD ---------------- */
+
+function RecipeCard({ recipe }: { recipe: RecipeRow }) {
+  return (
+    <Link href={`/recipe?id=${recipe.id}`}>
+      <div className="card p-4 h-full flex flex-col justify-between cursor-pointer">
+        <div className="flex items-start justify-between gap-3">
+          <h3 className="line-clamp-2">{recipe.title}</h3>
+          {recipe.is_favorited && (
+            <Heart className="w-4 h-4 fill-current" />
+          )}
+        </div>
+
+        {recipe.description && (
+          <p className="text-sm mt-2 line-clamp-3">
+            {recipe.description}
+          </p>
+        )}
+
+        <p className="text-xs text-muted mt-4">
+          {new Date(recipe.created_at).toLocaleDateString()}
+        </p>
+      </div>
+    </Link>
+  );
+}

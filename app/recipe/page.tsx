@@ -39,35 +39,34 @@ export default function RecipePage() {
   const [recipeId, setRecipeId] = useState<string | null>(null);
   const hasSavedInitialRecipe = useRef(false);
   const generationIdRef = useRef<string | null>(null);
-
-
+  
+  
   const [chatMessages, setChatMessages] = useState<ChatMsg[]>([]);
   const [chatInput, setChatInput] = useState("");
   const [sending, setSending] = useState(false);
-
+  
   const messagesRef = useRef<HTMLDivElement | null>(null);
   
-
+  
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     let gen = params.get("gen");
-
+    
     if (!gen) {
       gen = crypto.randomUUID();
       params.set("gen", gen);
       window.history.replaceState({}, "", `?${params.toString()}`);
     }
-
+    
     generationIdRef.current = gen;
   }, []);
-
+  
   useEffect(() => {
     if (typeof window === "undefined") return;
     const params = new URLSearchParams(window.location.search);
     const prompt = params.get("prompt");
     const cookTime = params.get("cookTime") || "30 min";
-
-    if (!prompt) return;
+    const recipeIdFromQuery = params.get("id");
 
     // Include Initial Prompt in Chat
     setChatMessages([
@@ -89,8 +88,46 @@ export default function RecipePage() {
         } = await supabase.auth.getUser();
 
         if (!user) return;
+        
+        // CASE 1: Opened from My Recipes via ?id=
+        if (recipeIdFromQuery) {
+          const { data: byId } = await supabase
+            .from("recipes")
+            .select("*")
+            .eq("id", recipeIdFromQuery)
+            .eq("user_id", user.id)
+            .single();
 
-        /* Try loading existing recipe */
+          if (byId) {
+            setRecipe({
+              title: byId.title,
+              description: byId.description,
+              prepTime: byId.prep_time,
+              cookTime: byId.cook_time,
+              servings: byId.servings,
+              difficulty: byId.difficulty,
+              ingredients: byId.ingredients,
+              instructions: byId.instructions,
+              tips: byId.tips,
+            });
+
+            setRecipeId(byId.id);
+            setIsFavorited(byId.is_favorited);
+
+            setChatMessages([
+              {
+                id: "system",
+                author: "assistant",
+                text: "Recipe loaded from your saved recipes.",
+              },
+            ]);
+
+            return; // ⛔ stop here — DO NOT generate
+          }
+        }
+
+
+        // Load existing recipe when page is refreshed
         const { data: existing } = await supabase
           .from("recipes")
           .select("*")
@@ -116,7 +153,10 @@ export default function RecipePage() {
           return;
         }
 
-        // If no recipe found, generate new recipe
+        // If no prompt found and no id loaded recipe then throw error
+        if(!prompt) throw Error("No Recipe Found");
+
+        // Generate new recipe
         const data = await postRecipe(prompt, cookTime);
         if (!data?.recipe) throw new Error("Invalid recipe");
 
