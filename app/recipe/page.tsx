@@ -454,6 +454,7 @@ export default function RecipePage() {
               <span className="flex items-center gap-1">
                 <Users className="w-4 h-4 accent" /> {recipe.servings} servings
               </span>
+              <span>{recipe.difficulty}</span>
             </div>
           </div>
 

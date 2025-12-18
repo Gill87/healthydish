@@ -15,7 +15,7 @@ export default function NavBar() {
     { href: '/home', label: 'Home' },
     { href: '/myrecipes', label: 'My Recipes' },
     { href: '/groceries', label: 'Groceries' },
-    { href: '/popular', label: 'Popular Recipes' },
+    { href: '/popular-recipes', label: 'Popular Recipes' },
   ];
 
   useEffect(() => {

@@ -1,0 +1,291 @@
+[
+  {
+    "title": "Hot Honey Chicken Bites",
+    "description": "Crispy baked chicken tossed in sweet-spicy hot honey for a bold, addictive flavor with less oil than frying.",
+    "prepTime": "15 min",
+    "cookTime": "20 min",
+    "servings": 4,
+    "difficulty": "Easy",
+    "ingredients": [
+      { "item": "chicken breast, cubed", "amount": "1 lb" },
+      { "item": "olive oil", "amount": "2 tbsp" },
+      { "item": "garlic powder", "amount": "1 tsp" },
+      { "item": "paprika", "amount": "1 tsp" },
+      { "item": "salt & pepper", "amount": "to taste" },
+      { "item": "honey", "amount": "1/3 cup" },
+      { "item": "hot sauce", "amount": "2 tbsp" },
+      { "item": "apple cider vinegar", "amount": "1 tsp" }
+    ],
+    "instructions": [
+      "Preheat oven to 400°F (200°C) and line a baking sheet with parchment paper.",
+      "Toss chicken with olive oil, garlic powder, paprika, salt, and pepper.",
+      "Spread chicken pieces on the baking sheet and bake 18–20 minutes until cooked through.",
+      "In a small bowl, whisk honey, hot sauce, and apple cider vinegar.",
+      "Toss baked chicken in hot honey mixture until coated.",
+      "Serve warm."
+    ],
+    "tips": [
+      "For extra crispiness, broil chicken for 2 minutes before saucing.",
+      "Use chili flakes for extra heat.",
+      "Serve over rice or in tacos."
+    ]
+  },
+  {
+    "title": "Cheesy Dumpling Bake",
+    "description": "A cozy casserole-style dish inspired by dumplings, layered with savory sauce and melty cheese for ultimate comfort food vibes.",
+    "prepTime": "15 min",
+    "cookTime": "25 min",
+    "servings": 6,
+    "difficulty": "Easy",
+    "ingredients": [
+      { "item": "store-bought dumplings (any flavor)", "amount": "20 pieces" },
+      { "item": "butter", "amount": "2 tbsp" },
+      { "item": "garlic, minced", "amount": "2 cloves" },
+      { "item": "soy sauce", "amount": "2 tbsp" },
+      { "item": "sesame oil", "amount": "1 tsp" },
+      { "item": "shredded mozzarella", "amount": "1 cup" },
+      { "item": "green onions, sliced", "amount": "1/4 cup" }
+    ],
+    "instructions": [
+      "Preheat oven to 375°F (190°C).",
+      "Place dumplings in a baking dish.",
+      "Melt butter in a pan, add garlic, soy sauce, and sesame oil.",
+      "Pour sauce over dumplings.",
+      "Top with mozzarella cheese.",
+      "Bake for 20–25 minutes until bubbly and golden.",
+      "Sprinkle with green onions before serving."
+    ],
+    "tips": [
+      "Use frozen dumplings straight from freezer.",
+      "Add chili oil for spice.",
+      "Serve immediately for best texture."
+    ]
+  },
+  {
+    "title": "Ribbon Carrot Salad with Chili Crisp",
+    "description": "A light, crunchy carrot salad tossed with sesame, rice vinegar, and chili crisp for a refreshing yet bold side dish.",
+    "prepTime": "10 min",
+    "cookTime": "0 min",
+    "servings": 4,
+    "difficulty": "Easy",
+    "ingredients": [
+      { "item": "large carrots", "amount": "4" },
+      { "item": "rice vinegar", "amount": "2 tbsp" },
+      { "item": "sesame oil", "amount": "1 tbsp" },
+      { "item": "chili crisp", "amount": "1 tbsp" },
+      { "item": "honey", "amount": "1 tsp" },
+      { "item": "sesame seeds", "amount": "1 tsp" },
+      { "item": "salt", "amount": "to taste" }
+    ],
+    "instructions": [
+      "Peel carrots into long ribbons using a vegetable peeler.",
+      "Place carrot ribbons in a bowl.",
+      "Whisk rice vinegar, sesame oil, chili crisp, honey, and salt.",
+      "Toss carrots with dressing.",
+      "Sprinkle with sesame seeds and serve."
+    ],
+    "tips": [
+      "Let marinate 10 minutes for deeper flavor.",
+      "Add cucumber or cabbage for extra crunch.",
+      "Use mild chili crisp if heat sensitive."
+    ]
+  },
+  {
+    "title": "Marry Me Chicken",
+    "description": "Tender chicken cooked in a creamy sun-dried tomato sauce that’s rich, flavorful, and famously irresistible.",
+    "prepTime": "10 min",
+    "cookTime": "20 min",
+    "servings": 4,
+    "difficulty": "Easy",
+    "ingredients": [
+      { "item": "chicken breasts", "amount": "2" },
+      { "item": "olive oil", "amount": "2 tbsp" },
+      { "item": "garlic, minced", "amount": "3 cloves" },
+      { "item": "heavy cream", "amount": "1 cup" },
+      { "item": "sun-dried tomatoes", "amount": "1/2 cup" },
+      { "item": "parmesan cheese", "amount": "1/3 cup" },
+      { "item": "Italian seasoning", "amount": "1 tsp" },
+      { "item": "salt & pepper", "amount": "to taste" }
+    ],
+    "instructions": [
+      "Season chicken and sear in olive oil until golden.",
+      "Remove chicken and sauté garlic.",
+      "Stir in cream, sun-dried tomatoes, parmesan, and seasoning.",
+      "Return chicken to pan and simmer until cooked through.",
+      "Serve warm with pasta, rice, or bread."
+    ],
+    "tips": [
+      "Do not boil the sauce; gentle simmering keeps it creamy.",
+      "Add spinach for extra nutrition.",
+      "Use boneless thighs for richer flavor."
+    ]
+  },
+  {
+    "title": "White Chicken Chili",
+    "description": "A creamy, comforting chili made with tender chicken, beans, and mild spices for a cozy, satisfying bowl.",
+    "prepTime": "10 min",
+    "cookTime": "25 min",
+    "servings": 6,
+    "difficulty": "Easy",
+    "ingredients": [
+      { "item": "shredded chicken", "amount": "2 cups" },
+      { "item": "white beans", "amount": "2 cans" },
+      { "item": "chicken broth", "amount": "3 cups" },
+      { "item": "green chiles", "amount": "1 can" },
+      { "item": "cream cheese", "amount": "4 oz" },
+      { "item": "cumin", "amount": "1 tsp" },
+      { "item": "garlic powder", "amount": "1 tsp" },
+      { "item": "salt & pepper", "amount": "to taste" }
+    ],
+    "instructions": [
+      "Add chicken, beans, broth, green chiles, and spices to a pot.",
+      "Simmer for 15 minutes.",
+      "Stir in cream cheese until melted and creamy.",
+      "Simmer 5 more minutes and serve."
+    ],
+    "tips": [
+      "Top with avocado, cilantro, or lime.",
+      "Use rotisserie chicken to save time.",
+      "Add jalapeños for heat."
+    ]
+  },
+  {
+    "title": "Turkish Manti-Inspired Pasta",
+    "description": "A comforting pasta dish inspired by Turkish manti dumplings, topped with garlicky yogurt and spiced butter for bold flavor.",
+    "prepTime": "10 min",
+    "cookTime": "15 min",
+    "servings": 4,
+    "difficulty": "Easy",
+    "ingredients": [
+      { "item": "pasta", "amount": "8 oz" },
+      { "item": "plain yogurt", "amount": "1 cup" },
+      { "item": "garlic, minced", "amount": "2 cloves" },
+      { "item": "butter", "amount": "3 tbsp" },
+      { "item": "paprika", "amount": "1 tsp" },
+      { "item": "red chili flakes", "amount": "1/2 tsp" },
+      { "item": "salt", "amount": "to taste" }
+    ],
+    "instructions": [
+      "Cook pasta according to package directions.",
+      "Mix yogurt with garlic and salt.",
+      "Melt butter in a pan, then stir in paprika and chili flakes.",
+      "Toss pasta with yogurt sauce.",
+      "Drizzle spiced butter over top and serve."
+    ],
+    "tips": [
+      "Use small pasta shapes for authentic texture.",
+      "Add ground beef for protein.",
+      "Serve immediately to avoid yogurt separating."
+    ]
+  },
+  {
+    "title": "Candied Cranberries",
+    "description": "Crisp, sweet-tart cranberries coated in a sparkling sugar shell — a festive snack or dessert topper.",
+    "prepTime": "10 min",
+    "cookTime": "0 min (plus rest)",
+    "servings": 8,
+    "difficulty": "Easy",
+    "ingredients": [
+      { "item": "fresh cranberries", "amount": "2 cups" },
+      { "item": "sugar", "amount": "1 cup" },
+      { "item": "water", "amount": "1/2 cup" },
+      { "item": "extra sugar for coating", "amount": "1/2 cup" }
+    ],
+    "instructions": [
+      "Heat water and sugar until dissolved, then cool slightly.",
+      "Toss cranberries in syrup.",
+      "Let sit 1 hour.",
+      "Roll cranberries in sugar.",
+      "Let dry and serve."
+    ],
+    "tips": [
+      "Do not overheat syrup or cranberries will burst.",
+      "Store in fridge up to 3 days.",
+      "Use as topping on cakes or drinks."
+    ]
+  },
+  {
+    "title": "Brownie Pudding",
+    "description": "A rich chocolate dessert with a brownie-like top and gooey pudding center for indulgent chocolate lovers.",
+    "prepTime": "10 min",
+    "cookTime": "35 min",
+    "servings": 8,
+    "difficulty": "Medium",
+    "ingredients": [
+      { "item": "butter", "amount": "1/2 cup" },
+      { "item": "sugar", "amount": "1 cup" },
+      { "item": "eggs", "amount": "2" },
+      { "item": "cocoa powder", "amount": "1/3 cup" },
+      { "item": "flour", "amount": "1/4 cup" },
+      { "item": "vanilla extract", "amount": "1 tsp" }
+    ],
+    "instructions": [
+      "Preheat oven to 325°F (160°C).",
+      "Melt butter and whisk with sugar.",
+      "Beat in eggs and vanilla.",
+      "Stir in cocoa and flour.",
+      "Pour into baking dish and bake 30–35 minutes.",
+      "Serve warm."
+    ],
+    "tips": [
+      "Do not overbake; center should be gooey.",
+      "Serve with ice cream.",
+      "Use high-quality cocoa for best flavor."
+    ]
+  },
+  {
+    "title": "Vegan Chocolate Date Bars",
+    "description": "Naturally sweet chocolate bars made with dates and cocoa for a soft, chewy, plant-based treat.",
+    "prepTime": "10 min",
+    "cookTime": "0 min",
+    "servings": 10,
+    "difficulty": "Easy",
+    "ingredients": [
+      { "item": "pitted dates", "amount": "2 cups" },
+      { "item": "cocoa powder", "amount": "1/4 cup" },
+      { "item": "coconut oil", "amount": "2 tbsp" },
+      { "item": "vanilla extract", "amount": "1 tsp" },
+      { "item": "pinch of salt", "amount": "1" }
+    ],
+    "instructions": [
+      "Blend all ingredients in a food processor until sticky.",
+      "Press into a lined pan.",
+      "Chill for 1 hour.",
+      "Slice and serve."
+    ],
+    "tips": [
+      "Add nuts for crunch.",
+      "Use medjool dates for best texture.",
+      "Store refrigerated."
+    ]
+  },
+  {
+    "title": "Protein Muffins",
+    "description": "Soft, fluffy muffins packed with protein for a wholesome snack or on-the-go breakfast.",
+    "prepTime": "10 min",
+    "cookTime": "18 min",
+    "servings": 12,
+    "difficulty": "Easy",
+    "ingredients": [
+      { "item": "oats or oat flour", "amount": "1 1/2 cups" },
+      { "item": "protein powder", "amount": "1/2 cup" },
+      { "item": "baking powder", "amount": "1 tsp" },
+      { "item": "banana", "amount": "1 large" },
+      { "item": "eggs", "amount": "2" },
+      { "item": "milk", "amount": "1/2 cup" },
+      { "item": "honey or maple syrup", "amount": "1/4 cup" }
+    ],
+    "instructions": [
+      "Preheat oven to 350°F (175°C) and line a muffin tin.",
+      "Mash banana and whisk with eggs, milk, and sweetener.",
+      "Stir in dry ingredients until combined.",
+      "Fill muffin cups and bake 15–18 minutes.",
+      "Cool on rack."
+    ],
+    "tips": [
+      "Do not overmix or muffins become dense.",
+      "Add chocolate chips or berries.",
+      "Use whey or plant protein."
+    ]
+  }
+]
