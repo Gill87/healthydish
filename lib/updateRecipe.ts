@@ -1,10 +1,16 @@
 import supabase from "@/lib/supabaseClient";
 import type { Recipe } from "@/types/recipe";
+import guestSession from "@/lib/guestSession";
 
 export async function updateRecipe(
   recipeId: string,
   recipe: Recipe,
 ) {
+  // Client-side guest update
+  if (typeof window !== 'undefined' && recipeId.startsWith('guest_')) {
+    return guestSession.updateGuestRecipe(recipeId, recipe);
+  }
+
   const { error } = await supabase
     .from("recipes")
     .update({

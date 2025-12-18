@@ -17,6 +17,7 @@ export default function MyRecipesPage() {
   const [recipes, setRecipes] = useState<RecipeRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isAuthed, setIsAuthed] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -25,7 +26,13 @@ export default function MyRecipesPage() {
           data: { user },
         } = await supabase.auth.getUser();
 
-        if (!user) return;
+        setIsAuthed(!!user);
+
+        if (!user) {
+          // keep list empty for unauthenticated users (show signup CTA)
+          setRecipes([]);
+          return;
+        }
 
         const { data, error } = await supabase
           .from("recipes")
@@ -72,7 +79,14 @@ export default function MyRecipesPage() {
           <h2 className="mb-4">Favorited Recipes</h2>
 
           {favorited.length === 0 ? (
-            <p className="text-muted">No favorited recipes yet.</p>
+            isAuthed ? (
+              <p className="text-muted">No favorited recipes yet.</p>
+            ) : (
+              <p className="text-muted">
+                <Link className="text-accent underline" href="/signup">Sign up</Link> or{" "}
+                <Link className="text-accent underline" href="/signin">Log in</Link> to favorite and save recipes
+              </p>
+            )
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {favorited.map(recipe => (
@@ -87,7 +101,14 @@ export default function MyRecipesPage() {
           <h2 className="mb-4">Recently Created</h2>
 
           {recent.length === 0 ? (
-            <p className="text-muted">No recipes created yet.</p>
+            isAuthed ? (
+              <p className="text-muted">No recipes created yet.</p>
+            ) : (
+              <p className="text-muted">
+                <Link className="text-accent underline" href="/signup">Sign up</Link> or{" "}
+                <Link className="text-accent underline" href="/signin">Log in</Link> to favorite and save recipes
+              </p>            
+            )
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {recent.map(recipe => (

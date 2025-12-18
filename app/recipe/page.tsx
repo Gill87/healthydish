@@ -7,6 +7,7 @@ import { saveRecipe } from "@/lib/saveRecipe";
 import supabase from "@/lib/supabaseClient";
 import { updateRecipe } from "@/lib/updateRecipe";
 import { updateFavorite } from "@/lib/updateFavorite";
+import guestSession from '@/lib/guestSession';
 
 import {
   Clock,
@@ -86,71 +87,121 @@ export default function RecipePage() {
         const {
           data: { user },
         } = await supabase.auth.getUser();
+        const userId = user?.id;
 
-        if (!user) return;
-        
         // CASE 1: Opened from My Recipes via ?id=
         if (recipeIdFromQuery) {
-          const { data: byId } = await supabase
-            .from("recipes")
-            .select("*")
-            .eq("id", recipeIdFromQuery)
-            .eq("user_id", user.id)
-            .single();
+          if (userId) {
+            const { data: byId } = await supabase
+              .from("recipes")
+              .select("*")
+              .eq("id", recipeIdFromQuery)
+              .eq("user_id", userId)
+              .single();
 
-          if (byId) {
-            setRecipe({
-              title: byId.title,
-              description: byId.description,
-              prepTime: byId.prep_time,
-              cookTime: byId.cook_time,
-              servings: byId.servings,
-              difficulty: byId.difficulty,
-              ingredients: byId.ingredients,
-              instructions: byId.instructions,
-              tips: byId.tips,
-            });
+            if (byId) {
+              setRecipe({
+                title: byId.title,
+                description: byId.description,
+                prepTime: byId.prep_time,
+                cookTime: byId.cook_time,
+                servings: byId.servings,
+                difficulty: byId.difficulty,
+                ingredients: byId.ingredients,
+                instructions: byId.instructions,
+                tips: byId.tips,
+              });
 
-            setRecipeId(byId.id);
-            setIsFavorited(byId.is_favorited);
+              setRecipeId(byId.id);
+              setIsFavorited(byId.is_favorited);
 
-            setChatMessages([
-              {
-                id: "system",
-                author: "assistant",
-                text: "Recipe loaded from your saved recipes.",
-              },
-            ]);
+              setChatMessages([
+                {
+                  id: "system",
+                  author: "assistant",
+                  text: "Recipe loaded from your saved recipes.",
+                },
+              ]);
 
-            return; // ⛔ stop here — DO NOT generate
+              return; // ⛔ stop here — DO NOT generate
+            }
+          } else {
+            const guest = guestSession.getGuestRecipeById(recipeIdFromQuery);
+            if (guest) {
+              setRecipe({
+                title: guest.title,
+                description: guest.description,
+                prepTime: guest.prep_time,
+                cookTime: guest.cook_time,
+                servings: guest.servings,
+                difficulty: guest.difficulty,
+                ingredients: guest.ingredients,
+                instructions: guest.instructions,
+                tips: guest.tips,
+              });
+
+              setRecipeId(guest.id);
+              setIsFavorited(guest.is_favorited);
+
+              setChatMessages([
+                {
+                  id: "system",
+                  author: "assistant",
+                  text: "Recipe loaded from your saved recipes.",
+                },
+              ]);
+
+              return;
+            }
           }
         }
 
-
         // Load existing recipe when page is refreshed
-        const { data: existing } = await supabase
-          .from("recipes")
-          .select("*")
-          .eq("user_id", user.id)
-          .eq("generation_id", generationIdRef.current)
-          .single();
+        if (userId) {
+          const { data: existing } = await supabase
+            .from("recipes")
+            .select("*")
+            .eq("user_id", userId)
+            .eq("generation_id", generationIdRef.current)
+            .single();
 
-        if (existing) {
-          setRecipe({
-            title: existing.title,
-            description: existing.description,
-            prepTime: existing.prep_time,
-            cookTime: existing.cook_time,
-            servings: existing.servings,
-            difficulty: existing.difficulty,
-            ingredients: existing.ingredients,
-            instructions: existing.instructions,
-            tips: existing.tips,
-          });
+          if (existing) {
+            setRecipe({
+              title: existing.title,
+              description: existing.description,
+              prepTime: existing.prep_time,
+              cookTime: existing.cook_time,
+              servings: existing.servings,
+              difficulty: existing.difficulty,
+              ingredients: existing.ingredients,
+              instructions: existing.instructions,
+              tips: existing.tips,
+            });
 
-          setRecipeId(existing.id);
-          setIsFavorited(existing.is_favorited);
-          return;
+            setRecipeId(existing.id);
+            setIsFavorited(existing.is_favorited);
+            return;
+          }
+        } else {
+          const guestExisting = guestSession.getGuestRecipeByGenerationId(
+            generationIdRef.current!
+          );
+          if (guestExisting) {
+            setRecipe({
+              title: guestExisting.title,
+              description: guestExisting.description,
+              prepTime: guestExisting.prep_time,
+              cookTime: guestExisting.cook_time,
+              servings: guestExisting.servings,
+              difficulty: guestExisting.difficulty,
+              ingredients: guestExisting.ingredients,
+              instructions: guestExisting.instructions,
+              tips: guestExisting.tips,
+            });
+            setRecipeId(guestExisting.id);
+            setIsFavorited(guestExisting.is_favorited);
+            return;
+          }
         }
 
         // If no prompt found and no id loaded recipe then throw error
@@ -163,15 +214,20 @@ export default function RecipePage() {
         const normalized = normalizeRecipe(data.recipe, cookTime);
         setRecipe(normalized);
 
-        // SAVE RECIPE HERE (ONCE)
-        if (user && !hasSavedInitialRecipe.current) {
+        // SAVE RECIPE HERE (ONCE) — authenticated or guest
+        if (!hasSavedInitialRecipe.current) {
           hasSavedInitialRecipe.current = true;
 
-          const saved = await saveRecipe(normalized, user.id, generationIdRef.current!);
+          const saved = await saveRecipe(
+            normalized,
+            // pass undefined if no auth, saveRecipe will fallback to guest
+            user?.id,
+            generationIdRef.current!
+          );
 
           if (saved) {
             setRecipeId(saved.id);
-            setIsFavorited(saved.is_favorited);
+            setIsFavorited(!!saved.is_favorited);
           }
         }
 

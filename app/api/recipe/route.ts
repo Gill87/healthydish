@@ -32,6 +32,55 @@ export async function POST(req: NextRequest) {
     const apiKey = process.env.DEEPSEEK_API_KEY;
     if (!apiKey) return makeError("Server misconfigured (missing API key)", 500);
 
+    // Run an AI-based classification to ensure the prompt is food-related
+    try {
+      const classifyRes = await fetch("https://api.deepseek.com/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${apiKey}`,
+        },
+        body: JSON.stringify({
+          model: "deepseek-chat",
+          messages: [
+            {
+              role: "system",
+              content:
+                "You are a classifier that determines whether a user's text is requesting a food or recipe-related task. Reply with ONLY valid JSON with these keys: {\"is_food\": true|false, \"confidence\": 0-1, \"reason\": \"short explanation\"}. Do NOT add any extra text."
+            },
+            {
+              role: "user",
+              content: prompt
+            }
+          ],
+          temperature: 0,
+          max_tokens: 200,
+        }),
+      });
+
+      if (!classifyRes.ok) {
+        // if classifier fails, allow generation to continue (fail-open) but log
+        const txt = await classifyRes.text().catch(() => `Classifier error: ${classifyRes.status}`);
+        console.warn("Classifier warning:", txt);
+      } else {
+        const classifier = await classifyRes.json().catch(() => null);
+        const rawClass = classifier?.choices?.[0]?.message?.content;
+        if (rawClass) {
+          try {
+            const cleaned = rawClass.replace(/```json|```/g, "").trim();
+            const parsedClass = JSON.parse(cleaned);
+            if (!parsedClass.is_food) {
+              return makeError("Please enter a food-related prompt and try again.", 400);
+            }
+          } catch (e) {
+            // parse failed: ignore and proceed to generation
+          }
+        }
+      }
+    } catch (e) {
+      console.warn("Classifier error", e);
+    }
+
     // Call the provider
     const deepseekRes = await fetch("https://api.deepseek.com/v1/chat/completions", {
       method: "POST",

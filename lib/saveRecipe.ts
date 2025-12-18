@@ -1,11 +1,18 @@
 import supabase from "@/lib/supabaseClient";
 import type { Recipe } from "@/types/recipe";
+import guestSession from "@/lib/guestSession";
 
 export async function saveRecipe(
-    recipe: Recipe, 
-    userId: string, 
-    generationId: string
+  recipe: Recipe,
+  userId?: string,
+  generationId?: string
 ) {
+  // Client-side guest fallback
+  if (typeof window !== 'undefined' && !userId) {
+    const stored = guestSession.saveGuestRecipe(recipe, generationId);
+    return stored;
+  }
+
   const { data, error } = await supabase
     .from("recipes")
     .insert({
