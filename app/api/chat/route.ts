@@ -30,7 +30,9 @@ export async function POST(req: NextRequest) {
         "You are a helpful recipe assistant and professional chef. The user has a recipe (if provided). " +
         "When the user asks to modify or improve the recipe, respond in JSON with the exact shape " +
         `{"title": "...", "description":"...", "prepTime":"...", "cookTime":"...", "servings": num, "difficulty":"...", "ingredients":[{"item":"...","amount":"..."}], "instructions":["..."], "tips":["..."]}` +
-        " — and *only* return that JSON (no markdown). If the user is asking a question or wants advice, reply with a plain text assistant message in the 'reply' field. If you return both a reply and an updated recipe, the server will parse and forward both."
+        " — and *only* return that JSON (no markdown). If the user is asking a question or wants advice, reply with a plain text assistant message in the 'reply' field. If you return both a reply and an updated recipe, the server will parse and forward both." + 
+        "If the user enters something completely random with no context to editing the recipe or food in general, then reply with a plain text message in the 'reply' field saying 'Unable to understand the user request'"
+
     };
 
     // Compose messages: system + optional prior conversation + user prompt
@@ -71,6 +73,7 @@ export async function POST(req: NextRequest) {
     let parsedRecipe = null;
     let replyText = content;
 
+
     // If the assistant returned fenced code or text, strip fences
     const clean = content.replace(/```json|```/g, "").trim();
 
@@ -83,13 +86,13 @@ export async function POST(req: NextRequest) {
         if (looksLikeRecipe) {
           parsedRecipe = parsed;
           replyText = "Recipe updated.";
-        } else if (parsed && parsed.reply && parsed.recipe) {
-          parsedRecipe = parsed.recipe;
+        } else if (parsed && parsed.reply) {
           replyText = parsed.reply;
+          if (parsed.recipe) parsedRecipe = parsed.recipe;
         } else {
-          // If parsed doesn't look like the recipe, keep as reply text
           replyText = typeof parsed === "string" ? parsed : JSON.stringify(parsed);
         }
+
       } catch (e) {
         // not valid JSON -> treat as plain text reply (do nothing)
         replyText = content;
@@ -98,6 +101,9 @@ export async function POST(req: NextRequest) {
       // not JSON -> plain text reply
       replyText = content;
     }
+
+    // Clean "reply: ..." junk if model sends that
+    replyText = replyText.replace(/^reply\s*:\s*/i, "").trim();
 
     return new Response(JSON.stringify({ reply: replyText, recipe: parsedRecipe }), {
       status: 200,
