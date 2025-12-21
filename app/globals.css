@@ -126,4 +126,50 @@
   .text-muted {
     color: var(--text-muted);
   }
+
+  .modal-backdrop {
+    background-color: rgba(0, 0, 0, 0.6);
+  }
+
+  .modal-panel {
+    background-color: var(--bg-surface); /* or var(--brand-500) if you want full green */
+    color: var(--text-primary);
+  }
+
+  /* Desktop cursor */
+  @media (hover: hover) and (pointer: fine) {
+    button {
+      cursor: pointer;
+    }
+  }
+
+  /* Smooth hover overlay */
+  button {
+    position: relative;
+    overflow: hidden;
+    transition: background-color 0.15s ease;
+  }
+
+  /* Gray hover */
+  button:hover:not(:disabled) {
+    background-color: rgba(0, 0, 0, 0.2); /* soft gray overlay */
+  }
+
+  /* If your buttons already have bg, this makes overlay sit on top */
+  button::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0);
+    transition: background 0.15s ease;
+  }
+
+  button:hover::after {
+    background: rgba(0, 0, 0, 0.08);
+  }
+
+  button:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
 }

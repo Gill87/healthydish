@@ -1,9 +1,9 @@
 'use client';
-
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import supabase from "@/lib/supabaseClient";
-import { Heart } from "lucide-react";
+import { deleteRecipeById } from "@/lib/deleteRecipe";
+import { Heart, Trash2 } from "lucide-react";
 
 type RecipeRow = {
   id: string;
@@ -70,6 +70,10 @@ export default function MyRecipesPage() {
   const favorited = recipes.filter(r => r.is_favorited);
   const recent = recipes.slice(0, 5); // last 5 created
 
+  const handleDeleteRecipe = (recipeId: string) => {
+    setRecipes(recipes.filter(r => r.id !== recipeId));
+  };
+
   return (
     <div className="page">
       <main className="container space-y-10 py-8">
@@ -90,7 +94,7 @@ export default function MyRecipesPage() {
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {favorited.map(recipe => (
-                <RecipeCard key={recipe.id} recipe={recipe} />
+                <RecipeCard key={recipe.id} recipe={recipe} onDelete={handleDeleteRecipe} />
               ))}
             </div>
           )}
@@ -112,7 +116,7 @@ export default function MyRecipesPage() {
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {recent.map(recipe => (
-                <RecipeCard key={recipe.id} recipe={recipe} />
+                <RecipeCard key={recipe.id} recipe={recipe} onDelete={handleDeleteRecipe} />
               ))}
             </div>
           )}
@@ -125,27 +129,89 @@ export default function MyRecipesPage() {
 
 /* ---------------- CARD ---------------- */
 
-function RecipeCard({ recipe }: { recipe: RecipeRow }) {
+function RecipeCard({ recipe, onDelete }: { recipe: RecipeRow; onDelete: (id: string) => void }) {
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+
+  const handleDelete = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setShowConfirm(true);
+  };
+
+  
+  const confirmDelete = async () => {
+    setDeleting(true);
+    try {
+      await deleteRecipeById(recipe.id);
+      onDelete(recipe.id);
+      setShowConfirm(false);
+    } catch (e: any) {
+      alert("Failed to delete recipe: " + (e.message ?? "Unknown error"));
+    } finally {
+      setDeleting(false);
+    }
+  };
+
   return (
-    <Link href={`/recipe?id=${recipe.id}`}>
-      <div className="card p-4 h-full flex flex-col justify-between cursor-pointer">
-        <div className="flex items-start justify-between gap-3">
-          <h3 className="line-clamp-2">{recipe.title}</h3>
-          {recipe.is_favorited && (
-            <Heart className="w-4 h-4 fill-current" />
+    <>
+      <Link href={`/recipe?id=${recipe.id}`}>
+        <div className="card p-4 h-full flex flex-col justify-between cursor-pointer relative">
+          <div className="flex items-start justify-between gap-3">
+            <h3 className="line-clamp-2">{recipe.title}</h3>
+            {recipe.is_favorited && (
+              <Heart className="w-4 h-4 fill-current" />
+            )}
+          </div>
+
+          {recipe.description && (
+            <p className="text-sm mt-2 line-clamp-3">
+              {recipe.description}
+            </p>
           )}
+
+          <div className="flex items-end justify-between mt-4">
+            <p className="text-xs text-muted">
+              {new Date(recipe.created_at).toLocaleDateString()}
+            </p>
+            <button
+              
+              onClick={handleDelete}
+              className="text-muted rounded-full p-1 hover:bg-black/10 transition-colors"
+              title="Delete recipe"
+            >
+              <Trash2 className="w-4 h-4" />
+            </button>
+          </div>
         </div>
+      </Link>
 
-        {recipe.description && (
-          <p className="text-sm mt-2 line-clamp-3">
-            {recipe.description}
-          </p>
-        )}
-
-        <p className="text-xs text-muted mt-4">
-          {new Date(recipe.created_at).toLocaleDateString()}
-        </p>
-      </div>
-    </Link>
+      {showConfirm && (
+        <div className="fixed inset-0 modal-backdrop flex items-center justify-center z-50">
+          <div className="modal-panel rounded-lg p-6 max-w-sm mx-4 shadow-lg">
+            <h3 className="mb-2">Delete Recipe?</h3>
+            <p className="mb-6">
+              Are you sure you want to delete "{recipe.title}"? This action cannot be undone.
+            </p>
+            <div className="flex gap-3 justify-end">
+              <button
+                onClick={() => setShowConfirm(false)}
+                className="px-4 py-2 rounded-md transition-colors has-bubble"
+                disabled={deleting}
+              >
+                Cancel
+              </button>
+              <button
+                onClick={confirmDelete}
+                className="px-4 py-2 rounded-md transition-colors disabled:opacity-50 has-bubble"
+                disabled={deleting}
+              >
+                {deleting ? "Deleting..." : "Delete"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
   );
 }
