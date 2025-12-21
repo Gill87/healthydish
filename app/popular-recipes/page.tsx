@@ -36,7 +36,7 @@ export default async function PopularRecipesPage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {rows.map((r) => (
               <Link key={r.id} href={`/popular-recipes/${r.id}`}>
-                <div className="card p-4 h-full flex flex-col justify-between cursor-pointer">
+                <div className="card p-4 h-full flex flex-col justify-between cursor-pointer hover:bg-slate-100 transition">
                   <div>
                     <h3 className="line-clamp-2">{r.title}</h3>
                     {r.description && (

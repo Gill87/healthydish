@@ -156,7 +156,7 @@ function RecipeCard({ recipe, onDelete }: { recipe: RecipeRow; onDelete: (id: st
   return (
     <>
       <Link href={`/recipe?id=${recipe.id}`}>
-        <div className="card p-4 h-full flex flex-col justify-between cursor-pointer relative">
+        <div className="card p-4 h-full flex flex-col justify-between cursor-pointer relative hover:bg-slate-100 transition">
           <div className="flex items-start justify-between gap-3">
             <h3 className="line-clamp-2">{recipe.title}</h3>
             {recipe.is_favorited && (

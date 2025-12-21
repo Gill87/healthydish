@@ -87,7 +87,7 @@ export default function Page() {
       <section className="mt-10 w-full max-w-4xl grid grid-cols-3 gap-6 text-center px-6">
         <Stat value="10k+" label="Recipes" />
         <Stat value="98%" label="Satisfaction" />
-        <Stat value="5min" label="Avg Time" />
+        <Stat value="10min" label="Avg Time" />
       </section>
     </main>
   );

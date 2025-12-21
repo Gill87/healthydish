@@ -68,7 +68,7 @@ export default function NavBar() {
           {user ? (
             <Link
               href="/account"
-              className="flex items-center gap-3 px-3 py-2 rounded-lg hover:accent-soft"
+              className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-100 transition"
             >
               <div className="w-9 h-9 rounded-full accent-soft flex items-center justify-center">
                 <User className="w-5 h-5" />
@@ -79,19 +79,19 @@ export default function NavBar() {
             </Link>
           ) : (
             <>
-              <Link
-                href="/signin"
-                className="px-4 py-2 text-sm rounded-lg text-muted hover:accent-soft"
-              >
-                Log in
-              </Link>
+            <Link
+              href="/signin"
+              className="px-4 py-2 text-sm rounded-lg text-muted hover:bg-slate-100 transition"
+            >
+              Log in
+            </Link>
 
-              <Link
-                href="/signup"
-                className="px-4 py-2 text-sm rounded-lg accent"
-              >
-                Sign up
-              </Link>
+            <Link
+              href="/signup"
+              className="px-4 py-2 text-sm rounded-lg accent hover:bg-slate-100 transition"
+            >
+              Sign up
+            </Link>
             </>
           )}
         </div>
