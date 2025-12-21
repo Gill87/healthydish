@@ -43,10 +43,10 @@ export default function HomePage() {
                 onChange={(e) => setCookTime(e.target.value)}
                 className="input appearance-none pr-12"
               >
-                <option>15 min</option>
-                <option>30 min</option>
-                <option>45 min</option>
-                <option>1 hour+</option>
+                <option value={15}>15 mins</option>
+                <option value={30}>30 mins</option>
+                <option value={45}>45 mins</option>
+                <option value={65}>60+ mins</option>
               </select>
               <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-muted" />
             </div>
