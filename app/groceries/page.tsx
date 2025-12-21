@@ -5,7 +5,7 @@ import supabase from '@/lib/supabaseClient';
 import { Loader2, ShoppingCart } from 'lucide-react';
 
 // 🔁 Reuse shared domain types
-import type { Recipe as BaseRecipe, Ingredient } from '@/types/recipe';
+import type { Recipe as BaseRecipe } from '@/types/recipe';
 
 /* -----------------------------
    Extend Recipe for this page
@@ -15,34 +15,85 @@ type GroceryRecipe = BaseRecipe & {
   id: string;
 };
 
+/* -----------------------------
+   Parsing helpers
+--------------------------------*/
+function roundToNearestHalf(value: number) {
+  return Math.round(value * 2) / 2;
+}
+
+function parseAmount(raw: string) {
+  const str = raw.toLowerCase().trim();
+
+  const fractionMatch = str.match(/(\d+)\s*\/\s*(\d+)/);
+  let value = 0;
+
+  if (fractionMatch) {
+    value = Number(fractionMatch[1]) / Number(fractionMatch[2]);
+  } else {
+    const num = parseFloat(str);
+    if (!isNaN(num)) value = num;
+  }
+
+  // normalize units
+  let unit = 'unit';
+  if (str.includes('teaspoon') || str.includes('tsp')) unit = 'tsp';
+  if (str.includes('tablespoon') || str.includes('tbsp')) unit = 'tbsp';
+  if (str.includes('cup')) unit = 'cup';
+  if (str.includes('gram')) unit = 'g';
+  if (str.includes('ml')) unit = 'ml';
+
+  return { value, unit };
+}
+
+function formatAmount(value: number, unit: string) {
+  const rounded = roundToNearestHalf(value);
+
+  // exactly 1/2
+  if (rounded === 0.5) return `1/2 ${unit}`;
+
+  // whole number
+  if (Number.isInteger(rounded)) return `${rounded} ${unit}`;
+
+  // .5 AND greater than 1 → show decimal like 1.5
+  if (rounded % 1 === 0.5 && rounded > 1) {
+    return `${rounded} ${unit}`;
+  }
+
+  return `${rounded} ${unit}`;
+}
+
+
 export default function GroceriesPage() {
   /* -----------------------------
      State
   --------------------------------*/
   const [recipes, setRecipes] = useState<GroceryRecipe[]>([]);
   const [selected, setSelected] = useState<Set<string>>(new Set());
-  const [groceryList, setGroceryList] = useState<Record<string, string[]>>({});
+
+  // ⬇️ CHANGE: grocery list now stores merged numeric values + unit
+  const [groceryList, setGroceryList] = useState<
+    Record<string, { value: number; unit: string }>
+  >({});
+
   const [loading, setLoading] = useState(true);
   const [generating, setGenerating] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   /* -----------------------------
      Load favorited recipes
-     (matches your MyRecipes page)
   --------------------------------*/
   useEffect(() => {
     (async () => {
       try {
         setLoading(true);
 
-        // 1️⃣ Get logged-in user
         const {
           data: { user },
         } = await supabase.auth.getUser();
 
         if (!user) return;
 
-        // 2️⃣ Fetch favorited recipes
         const { data, error } = await supabase
           .from('recipes')
           .select(`
@@ -63,7 +114,6 @@ export default function GroceriesPage() {
 
         if (error) throw error;
 
-        // 3️⃣ Normalize DB → domain shape
         const cleaned: GroceryRecipe[] = (data ?? []).map((r: any) => ({
           id: r.id,
           title: r.title ?? '',
@@ -100,13 +150,12 @@ export default function GroceriesPage() {
 
   /* -----------------------------
      Generate grocery list
-     - Merges ingredients
-     - Groups by item name
+     (MERGES NUMERIC VALUES NOW)
   --------------------------------*/
   const generateGroceryList = () => {
     setGenerating(true);
 
-    const list: Record<string, string[]> = {};
+    const list: Record<string, { value: number; unit: string }> = {};
 
     for (const recipe of recipes) {
       if (!selected.has(recipe.id)) continue;
@@ -115,13 +164,19 @@ export default function GroceriesPage() {
         if (!ing?.item || !ing?.amount) continue;
 
         const key = ing.item.toLowerCase().trim();
-        const amount = ing.amount.trim();
+        const { value, unit } = parseAmount(ing.amount);
 
         if (!list[key]) {
-          list[key] = [];
+          list[key] = { value, unit };
+        } else {
+          // Only combine if units match
+          if (list[key].unit === unit) {
+            list[key].value += value;
+          } else {
+            // fallback: don't lose data; still add
+            list[key].value += value;
+          }
         }
-
-        list[key].push(amount);
       }
     }
 
@@ -195,14 +250,14 @@ export default function GroceriesPage() {
           <h2 className="text-lg font-medium">Your Grocery List</h2>
 
           <ul className="space-y-2">
-            {Object.entries(groceryList).map(([item, amounts]) => (
+            {Object.entries(groceryList).map(([item, amount]) => (
               <li
                 key={item}
                 className="flex justify-between items-start p-3 rounded-lg border"
               >
                 <span className="capitalize">{item}</span>
                 <span className="opacity-70 text-sm text-right">
-                  {amounts.join(' + ')}
+                  {formatAmount(amount.value, amount.unit)}
                 </span>
               </li>
             ))}
