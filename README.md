@@ -1,36 +1,97 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+---
 
-## Getting Started
+# 🥗 HealthyDish
 
-First, run the development server:
+HealthyDish is a modern, user-friendly platform that helps people discover, plan, and cook healthier meals with ease. Users can explore recipes, save their favorites, generate grocery lists, and stay consistent with their nutrition goals — all in one place.
+
+https://github.com/user-attachments/assets/58caf1a5-99bc-4811-87bf-9c836b1e7a81
+
+---
+
+## 🚀 Features
+
+### ✅ Recipe Generation
+
+Customize and create healthy, easy-to-cook recipes with clear instructions and ingredient lists.
+
+### ❤️ Favorites
+
+Save your favorite recipes for quick access anytime.
+
+### 🛒 Smart Grocery Lists
+
+Automatically generate organized grocery lists from selected recipes to simplify weekly meal planning and shopping.
+
+### 🍽 Weekly Meal Planning
+
+Plan meals in advance to stay consistent, reduce stress, and eliminate last-minute food decisions.
+
+### 🔍 Search & Filters
+
+Find recipes based on dietary preferences, ingredients, or categories.
+
+---
+
+## 🧰 Tech Stack
+
+> Adjust this to your stack
+
+* **Frontend:** Next.js / Tailwind CSS
+* **Backend:** Supabase
+* **Database:** PostgreSQL
+* **Authentication:** Supabase Auth / OAuth
+* **Deployment:** Vercel
+
+---
+
+## 📦 Installation & Setup
 
 ```bash
+# Clone the repository
+git clone https://github.com/your-username/HealthyDish.git
+
+# Navigate into the project
+cd HealthyDish
+
+# Install dependencies
+npm install
+
+# Start development server
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 🖥️ Usage
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+1. Create an account or sign in
+2. Generate or browse recipes
+3. Save recipes to your favorites
+4. Add recipes to your grocery list
+5. Plan meals for the week and start cooking!
 
-## Learn More
+---
 
-To learn more about Next.js, take a look at the following resources:
+## 🤝 Contributing
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Contributions are always welcome!
+If you’d like to help improve HealthyDish:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+1. Fork the repository
+2. Create a new branch
+3. Commit your changes
+4. Submit a pull request
 
-## Deploy on Vercel
+---
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 💡 Vision
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+HealthyDish aims to make healthy eating simple, accessible, and enjoyable by removing friction from planning, shopping, and cooking.
+
+---
+
+## 📜 License
+
+MIT License — feel free to use, modify, and build upon HealthyDish.
+
+---
