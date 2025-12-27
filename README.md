@@ -4,7 +4,6 @@
 
 HealthyDish is a modern, user-friendly platform that helps people discover, plan, and cook healthier meals with ease. Users can explore recipes, save their favorites, generate grocery lists, and stay consistent with their nutrition goals — all in one place.
 
-https://github.com/user-attachments/assets/58caf1a5-99bc-4811-87bf-9c836b1e7a81
 
 ---
 
@@ -95,3 +94,5 @@ HealthyDish aims to make healthy eating simple, accessible, and enjoyable by rem
 MIT License — feel free to use, modify, and build upon HealthyDish.
 
 ---
+
+https://github.com/user-attachments/assets/58caf1a5-99bc-4811-87bf-9c836b1e7a81
